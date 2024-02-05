@@ -6,7 +6,7 @@ const osCommand = 'os '
 const getOsInfo = (input) => {
     switch (input) {
         case 'os --EOL':
-            return os.EOL
+            return JSON.stringify(os.EOL)
         case 'os --cpus':
             const cpusInfo = os.cpus()
             console.table(cpusInfo.map(cpu => cpu.model))
