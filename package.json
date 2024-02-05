@@ -1,0 +1,17 @@
+{
+  "name": "node-nodejs-basics",
+  "version": "1.0.0",
+  "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:n": "node src/index.js --username=MyName"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ElenVasileva/node-file-manager.git"
+  }
+}
