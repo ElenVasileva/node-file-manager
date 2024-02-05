@@ -1,4 +1,5 @@
-import fs from 'fs/promises';
+import fs from 'fs/promises'
+import path from 'path';
 
 const pathFraming = '"'
 
@@ -54,4 +55,9 @@ const parseTwoPaths = (pathString) => {
     return undefined;
 }
 
-export { pathExists, dirList, direntComparer, getDirentType, parseTwoPaths }
+const join = (workDirectory, userPath) => {
+    return path.isAbsolute(userPath) ? userPath : path.join(workDirectory, userPath)
+
+}
+
+export { pathExists, dirList, direntComparer, getDirentType, parseTwoPaths, join }

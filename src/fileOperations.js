@@ -1,9 +1,8 @@
 import { pipeline } from 'stream/promises';
 import { createReadStream, createWriteStream } from 'fs';
 import fs from 'fs/promises';
-import path from 'path';
 
-import { parseTwoPaths } from './fsHelper.js'
+import { parseTwoPaths, join } from './fsHelper.js'
 import constants from './constants.js'
 
 
@@ -17,7 +16,7 @@ const removeCommand = 'rm '
 const printFile = async (workPath, input) => {
     try {
         const inputPath = input.substring(catCommand.length)
-        const fileName = path.join(workPath, inputPath)
+        const fileName = join(workPath, inputPath)
         await pipeline(
             createReadStream(fileName),
             process.stdout, { end: false }
@@ -33,7 +32,7 @@ const createFile = async (workPath, input) => {
     let fileDescriptor
     try {
         const inputPath = input.substring(catCommand.length)
-        const fileName = path.join(workPath, inputPath);
+        const fileName = join(workPath, inputPath);
         fileDescriptor = await fs.open(fileName, 'wx');
         await fs.writeFile(fileDescriptor, '')
         return ''
@@ -50,8 +49,8 @@ const renameFile = async (workPath, input) => {
     try {
         const paths = parseTwoPaths(input.substring(renameCommand.length))
         if (paths) {
-            const oldFilePath = path.join(workPath, paths.first)
-            const newFilePath = path.join(workPath, paths.second)
+            const oldFilePath = join(workPath, paths.first)
+            const newFilePath = join(workPath, paths.second)
             await fs.rename(oldFilePath, newFilePath)
             return ''
         }
@@ -68,8 +67,8 @@ const copyFile = async (workPath, input) => {
     try {
         const paths = parseTwoPaths(input.substring(renameCommand.length))
         if (paths) {
-            const oldFilePath = path.join(workPath, paths.first)
-            const newFilePath = path.join(workPath, paths.second)
+            const oldFilePath = join(workPath, paths.first)
+            const newFilePath = join(workPath, paths.second)
             await pipeline(
                 createReadStream(oldFilePath),
                 createWriteStream(newFilePath),
@@ -89,8 +88,8 @@ const moveFile = async (workPath, input) => {
     try {
         const paths = parseTwoPaths(input.substring(renameCommand.length))
         if (paths) {
-            const oldFilePath = path.join(workPath, paths.first)
-            const newFilePath = path.join(workPath, paths.second)
+            const oldFilePath = join(workPath, paths.first)
+            const newFilePath = join(workPath, paths.second)
             await pipeline(
                 createReadStream(oldFilePath),
                 createWriteStream(newFilePath),
@@ -111,7 +110,7 @@ const moveFile = async (workPath, input) => {
 const removeFile = async (workPath, input) => {
     try {
         const inputPath = input.substring(removeCommand.length)
-        const fileName = path.join(workPath, inputPath);
+        const fileName = join(workPath, inputPath);
         await fs.unlink(fileName)
         return ''
     }

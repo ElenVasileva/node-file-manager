@@ -1,11 +1,10 @@
 import { pipeline } from 'stream/promises'
 import { Transform } from 'stream'
 import fs from 'fs'
-import path from 'path'
 import zlib from 'node:zlib'
 import crypto from 'crypto';
 
-import { parseTwoPaths } from './fsHelper.js'
+import { parseTwoPaths, join } from './fsHelper.js'
 import constants from './constants.js'
 
 const calcHashCommand = 'hash '
@@ -15,7 +14,7 @@ const decompressCommand = 'decompress '
 const calculateHash = async (workPath, input) => {
     try {
         const inputPath = input.substring(calcHashCommand.length)
-        const fileName = path.join(workPath, inputPath)
+        const fileName = join(workPath, inputPath)
         const readableStream = fs.createReadStream(fileName)
 
         const hash = crypto.createHash('sha256')
@@ -41,12 +40,12 @@ const compress = async (workPath, input) => {
     try {
         const paths = parseTwoPaths(input.substring(compressCommand.length))
         if (paths) {
-            const toCompressPath = path.join(workPath, paths.first)
-            const archivePath = path.join(workPath, path.second)
+            const toCompressPath = join(workPath, paths.first)
+            const archivePath = join(workPath, paths.second)
 
             await pipeline(
                 fs.createReadStream(toCompressPath),
-                zlib.createGzip(),
+                zlib.createBrotliCompress(),
                 fs.createWriteStream(archivePath),
             );
             return ''
@@ -62,14 +61,14 @@ const compress = async (workPath, input) => {
 
 const decompress = async (workPath, input) => {
     try {
-        const paths = parseTwoPaths(input.substring(compressCommand.length))
+        const paths = parseTwoPaths(input.substring(decompressCommand.length))
         if (paths) {
-            const archivePath = path.join(workPath, paths.first)
-            const toDecompressPath = path.join(workPath, path.second)
+            const archivePath = join(workPath, paths.first)
+            const toDecompressPath = join(workPath, paths.second)
 
             await pipeline(
                 fs.createReadStream(archivePath),
-                zlib.createGunzip(),
+                zlib.createBrotliDecompress(),
                 fs.createWriteStream(toDecompressPath),
             );
             return ''
